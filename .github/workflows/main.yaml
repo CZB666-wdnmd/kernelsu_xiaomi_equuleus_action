@@ -50,7 +50,7 @@ jobs:
            cat ./arch/arm64/configs/vendor/xiaomi/mi845_defconfig > ./arch/arm64/configs/vendor/xiaomi/equuleus_defconfig
            cat ./arch/arm64/configs/vendor/xiaomi/equuleus.config >> ./arch/arm64/configs/vendor/xiaomi/equuleus_defconfig
            make O=out ARCH=arm64 vendor/xiaomi/equuleus_defconfig
-           make -j$(nproc --all) O=out CC=clang ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE/home/runner/gcc_aarch64/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=/home/runner/gcc_arm/bin/arm-linux-androideabi- AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip LLVM_IAS=1 LLVM=1
+           make -j$(nproc --all) O=out CC=clang ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=/home/runner/gcc_aarch64/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=/home/runner/gcc_arm/bin/arm-linux-androideabi- AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip LLVM_IAS=1 LLVM=1
            mkdir
            cp /home/runner/kernel_sdm845/out/arch/arm64/boot/Image.gz-dtb
            
