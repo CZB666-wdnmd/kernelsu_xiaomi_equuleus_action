@@ -37,6 +37,8 @@ jobs:
            curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
            cd /home/runner/kernel_sdm845/KernelSU
            expr 10000 + $(git rev-list --count HEAD) + 200 > /home/runner/ksu_ver
+           git config --global user.email "asfasdas@gmail.com"
+           git config --global user.name "asdasfgas"
            git remote add target https://github.com/KodateMitsuru/KernelSU.git
            git fetch target
            git cherry-pick 436ade1e33c7dfc8b01e421e1dc9c52c1ca55920
