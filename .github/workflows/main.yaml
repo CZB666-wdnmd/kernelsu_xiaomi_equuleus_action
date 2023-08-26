@@ -1,0 +1,79 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build_kernelsu_for_equuleus
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v1
+      
+     - name: Set swap to 10G
+       uses: pierotofy/set-swap-space@master
+       with:
+         swap-size-gb: 10
+
+      - name: Setup build kernel environment
+        run: |
+         sudo apt-get update
+         sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libncurses5 libsdl1.2-dev libssl-dev libwxgtk3.0-gtk3-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev make unzip python-is-python3
+
+      - name: Download kernel source
+        run: |
+          cd /home/runner
+          git clone https://github.com/CZB666-wdnmd/android_kernel_xiaomi_sdm845.git -b thunder-kernelsu --depth=1 kernel_sdm845
+          
+      - name: Download gcc and clang
+        run: |
+          cd /home/runner
+          git clone https://github.com/PixelExperience/prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git --depth=1 gcc_aarch64
+          git clone https://github.com/PixelExperience/prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9.git --depth=1 gcc_arm
+          git clone https://github.com/PixelExperience/prebuilts_clang_kernel_linux-x86_clang-r416183b.git --depth=1 clang-r416183b
+          
+      - name: Patch kernel source
+        run: |
+          cd /home/runner/kernel_sdm845
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          cd /home/runner/kernel_sdm845/KernelSU
+          expr 10000 + $(git rev-list --count HEAD) + 200 > /home/runner/ksu_ver
+          git remote add target https://github.com/KodateMitsuru/KernelSU.git
+          git fetch target
+          git cherry-pick 436ade1e33c7dfc8b01e421e1dc9c52c1ca55920
+
+      - name: Build
+        run: |
+          cd /home/runner/kernel_sdm845
+          PATH="/home/runner/clang-r416183b/bin:${PATH}"
+          cat ./arch/arm64/configs/vendor/xiaomi/mi845_defconfig > ./arch/arm64/configs/vendor/xiaomi/equuleus_defconfig
+          cat ./arch/arm64/configs/vendor/xiaomi/equuleus.config >> ./arch/arm64/configs/vendor/xiaomi/equuleus_defconfig
+          make O=out ARCH=aarch64 vendor/xiaomi/equuleus_defconfig
+          make -j$(nproc --all) O=out CC=clang ARCH=arm64 CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE/home/runner/gcc_aarch64/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=/home/runner/gcc_arm/bin/arm-linux-androideabi- AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip LLVM_IAS=1 LLVM=1
+          mkdir
+          cp /home/runner/kernel_sdm845/out/arch/arm64/boot/Image.gz-dtb
+          
+      - name: Make boot.img
+        run: |
+          cd /home/runner/
+          git clone https://github.com/CZB666-wdnmd/kernelsu_xiaomi_equuleus_action.git bootedit
+          cp /home/runner/kernel_sdm845/out/arch/arm64/boot/Image  /home/runner/bootedit/img/kernel
+          cd /home/runner/bootedit/img
+          chmod +x ./magiskboot
+          ./magiskboot repack ./boot.img ./ksu-boot.img
+          
+      - name: Upload boot.img
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ksu-boot.img
+          path: "/home/runner/bootedit/img/ksu-boot.img"
