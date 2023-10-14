@@ -39,9 +39,9 @@ jobs:
            expr 10000 + $(git rev-list --count HEAD) + 200 > /home/runner/ksu_ver
            git config --global user.email "asfasdas@gmail.com"
            git config --global user.name "asdasfgas"
-           git remote add target https://github.com/KodateMitsuru/KernelSU.git
+           git remote add target https://github.com/CZB666-wdnmd/KernelSU.git
            git fetch target
-           git cherry-pick 436ade1e33c7dfc8b01e421e1dc9c52c1ca55920
+           git cherry-pick 5af8a55074f68b72022a93554cee79632feab787
 
        - name: Build
          run: |
