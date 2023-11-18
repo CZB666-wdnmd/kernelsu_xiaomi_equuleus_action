@@ -22,7 +22,7 @@ jobs:
        - name: Download kernel source
          run: |
            cd /home/runner
-           git clone https://github.com/CZB666-wdnmd/android_kernel_xiaomi_sdm845.git -b thunder-kernelsu --depth=1 kernel_sdm845
+           git clone https://github.com/CZB666-wdnmd/android_kernel_xiaomi_sdm845.git -b udc-kernelsu --depth=1 kernel_sdm845
            
        - name: Download gcc and clang
          run: |
