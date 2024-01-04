@@ -44,10 +44,13 @@ jobs:
            git cherry-pick 5af8a55074f68b72022a93554cee79632feab787 dc8769d6694990011e51c20663bde3457a48be8d
 
        - name: Setup ccache
-         uses: hendrikmuhs/ccache-action@v1.2
+         uses: Chocobo1/setup-ccache-action@v1
          with:
-           key: build-kernel-equuleus
-           max-size: 2G
+           install_ccache: false
+           update_packager_index: false
+           ccache_options: |
+             max_size=2G
+             compression=false
         
        - name: Build
          run: |
