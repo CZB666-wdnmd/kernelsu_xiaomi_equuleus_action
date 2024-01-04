@@ -2,6 +2,9 @@ name: build_kernelsu_for_equuleus
 
 on:
   workflow_dispatch:
+  
+permissions:
+  actions: write
 
 jobs:
   build:
