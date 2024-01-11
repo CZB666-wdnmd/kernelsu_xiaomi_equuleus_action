@@ -36,12 +36,13 @@ jobs:
            cd /home/runner/kernel_sdm845
            curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
            cd /home/runner/kernel_sdm845/KernelSU
-           expr 10000 + $(git rev-list --count HEAD) + 200 > /home/runner/ksu_ver
+           export KSU_STABLE_VER=$(git describe --abbrev=0 --tags)
+           export KSU_VER=$(expr 10000 + $(git rev-list --count HEAD) + 200)
            git config --global user.email "asfasdas@gmail.com"
            git config --global user.name "asdasfgas"
            git remote add target https://github.com/CZB666-wdnmd/KernelSU.git
            git fetch target
-           git cherry-pick 5af8a55074f68b72022a93554cee79632feab787 dc8769d6694990011e51c20663bde3457a48be8d
+           git cherry-pick 402a7d5 5d7e0df 2639b10
 
        - name: Build
          run: |
@@ -58,6 +59,7 @@ jobs:
            git clone https://github.com/CZB666-wdnmd/kernelsu_xiaomi_equuleus_action.git bootedit
            cp /home/runner/kernel_sdm845/out/arch/arm64/boot/Image  /home/runner/bootedit/img/kernel
            cd /home/runner/bootedit/img
+           export ROM_VER=$(cat /home/runner/bootedit/img/rom_ver)
            chmod +x ./magiskboot
            ./magiskboot repack ./boot.img ./ksu-boot.img
            
@@ -67,3 +69,14 @@ jobs:
          with:
            name: ksu-boot.img
            path: "/home/runner/bootedit/img/ksu-boot.img"
+           
+       - name: Create Release
+         id: create_release
+         uses: actions/create-release@v1
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+         with:
+           tag_name: ${{ github.ref }}
+           release_name: ${{ ROM_VER }} + KernelSU ${{ KSU_STABLE_VRR}} ${{ KSU_VER }}
+           draft: false
+           prerelease: true
