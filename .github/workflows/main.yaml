@@ -60,6 +60,8 @@ jobs:
            cd /home/runner/bootedit/img
            chmod +x ./magiskboot
            ./magiskboot repack ./boot.img ./ksu-boot.img
+           echo "KernelSU version: "+$(cat /home/runner/ksu_ver) >> $GITHUB_STEP_SUMMARY
+           echo "Boot image for evolution_equuleus-uq1a.240105.004-01061148-unofficial" >> $GITHUB_STEP_SUMMARY
            
        - name: Upload boot.img
          if: success()
