@@ -37,8 +37,10 @@ jobs:
            curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
            cd /home/runner/kernel_sdm845/KernelSU
            expr 10000 + $(git rev-list --count HEAD) + 200 > /home/runner/ksu_ver
+           git describe --abbrev=0 --tags > /home/runner/ksu_ver_tag
            git config --global user.email "asfasdas@gmail.com"
            git config --global user.name "asdasfgas"
+           
            git remote add target https://github.com/CZB666-wdnmd/KernelSU.git
            git fetch target
            git cherry-pick -n 7e495e606a70653e3e9e4c3d082d99fb6b6958c4 e407b54d8865a7d190e3b65bdf59902277eebedf
@@ -60,7 +62,7 @@ jobs:
            cd /home/runner/bootedit/img
            chmod +x ./magiskboot
            ./magiskboot repack ./boot.img ./ksu-boot.img
-           echo "KernelSU version: "+$(cat /home/runner/ksu_ver) >> $GITHUB_STEP_SUMMARY
+           echo "KernelSU version:$(cat /home/runner/ksu_ver)+$(cat /home/runner/ksu_ver)" >> $GITHUB_STEP_SUMMARY
            echo "Boot image for evolution_equuleus-uq1a.240105.004-01061148-unofficial" >> $GITHUB_STEP_SUMMARY
            
        - name: Upload boot.img
