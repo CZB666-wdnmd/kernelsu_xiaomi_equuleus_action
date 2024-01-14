@@ -41,7 +41,7 @@ jobs:
            git config --global user.name "asdasfgas"
            git remote add target https://github.com/CZB666-wdnmd/KernelSU.git
            git fetch target
-           git cherry-pick 5af8a55074f68b72022a93554cee79632feab787 dc8769d6694990011e51c20663bde3457a48be8d
+           git cherry-pick -n 7e495e606a70653e3e9e4c3d082d99fb6b6958c4 e407b54d8865a7d190e3b65bdf59902277eebedf
 
        - name: Build
          run: |
@@ -60,6 +60,8 @@ jobs:
            cd /home/runner/bootedit/img
            chmod +x ./magiskboot
            ./magiskboot repack ./boot.img ./ksu-boot.img
+           echo "KernelSU version: "+$(cat /home/runner/ksu_ver) >> $GITHUB_STEP_SUMMARY
+           echo "Boot image for evolution_equuleus-uq1a.240105.004-01061148-unofficial" >> $GITHUB_STEP_SUMMARY
            
        - name: Upload boot.img
          if: success()
