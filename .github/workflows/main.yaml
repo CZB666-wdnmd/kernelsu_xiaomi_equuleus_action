@@ -43,7 +43,7 @@ jobs:
            
            git remote add target https://github.com/CZB666-wdnmd/KernelSU.git
            git fetch target
-           git cherry-pick -n 7e495e606a70653e3e9e4c3d082d99fb6b6958c4 e407b54d8865a7d190e3b65bdf59902277eebedf
+           git cherry-pick -n 9a8a4996c6db1afc38d0175c5d3cd8084f9c768c cca4b7344b863a3e8bcdc00a66811956ee808d79
 
        - name: Build
          run: |
